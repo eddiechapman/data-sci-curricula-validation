@@ -1,6 +1,12 @@
+entrypoints==0.3
+flake8==3.7.8
 lxml==4.4.1
+mccabe==0.6.1
 numpy==1.17.2
 pandas==0.25.1
+pkg-resources==0.0.0
+pycodestyle==2.5.0
+pyflakes==2.1.1
 python-dateutil==2.8.0
 python-docx==0.8.10
 pytz==2019.2
