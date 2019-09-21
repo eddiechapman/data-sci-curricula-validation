@@ -75,8 +75,45 @@ def load_excel():
     print(len(degrees_us))
 
 
+def find_incomplete_sets(path):
+    incomplete_sets_dir = pathlib.Path('output/incomplete_sets')
+    incomplete_sets_dir.mkdir(exist_ok=True)
+    incomplete_set_log = pathlib.Path(
+        incomplete_sets_dir / 'incomplete_sets.log'
+    )
+
+    sets = {}
+    pattern = r'(\d{3})-(courses|skills|mission)\.docx'
+    for child in path.iterdir():
+        match = re.match(pattern, child.name)
+        if not match:
+            continue
+        if not match.group(1) in sets:
+            sets[match.group(1)] = []
+        sets[match.group(1)].append(match.group(2))
+
+    incomplete_sets = []
+    with open(incomplete_set_log, 'w') as f:
+        for degree, docs in sorted(sets.items()):
+            if not len(docs) == 3:
+                incomplete_sets.append(degree)
+                f.write(f'{degree}\n')
+                f.write(f'---\n')
+                f.write(f'skills:\t\t{"skills" in docs}\n')
+                f.write(f'mission:\t{"mission" in docs}\n')
+                f.write(f'courses:\t{"courses" in docs}\n')
+                f.write(f'\n')
+
+    for child in path.iterdir():
+        match = re.match(pattern, child.name)
+        if not match:
+            continue
+        if match.group(1) in incomplete_sets:
+            child.rename(incomplete_sets_dir / child.name)
+
+
 def main():
-    find_null_docs(DOCS_DIR)
+    find_incomplete_sets(DOCS_DIR)
 
 
 if __name__ == '__main__':
