@@ -112,8 +112,20 @@ def find_incomplete_sets(path):
             child.rename(incomplete_sets_dir / child.name)
 
 
+def name_complete_sets(path):
+    pattern = r'(\d{3})-(courses|skills|mission)\.docx'
+    complete_sets = set()
+    for child in path.iterdir():
+        match = re.match(pattern, child.name)
+        if match:
+            complete_sets.add(match.group(1))
+    with open('complete_sets.log', 'w') as f:
+        for degree in sorted(complete_sets):
+            f.write(f'{degree}\n')
+
+
 def main():
-    find_incomplete_sets(DOCS_DIR)
+    name_complete_sets(DOCS_DIR)
 
 
 if __name__ == '__main__':
