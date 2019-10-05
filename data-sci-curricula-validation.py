@@ -71,8 +71,7 @@ def load_excel():
             sheet_name='Codes',
             header=None
         )
-
-    print(len(degrees_us))
+        return degrees_us, degrees_non_us, codes
 
 
 def find_incomplete_sets(path):
@@ -125,6 +124,9 @@ def name_complete_sets(path):
 
 
 def main():
+    filter_filenames(DOCS_DIR)
+    find_null_docs(DOCS_DIR)
+    find_incomplete_sets(DOCS_DIR)
     name_complete_sets(DOCS_DIR)
 
 
