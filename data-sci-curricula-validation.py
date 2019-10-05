@@ -1,11 +1,11 @@
 import pathlib
 import re
-
 import docx
-import pandas as pd
 
 DOCS_DIR = pathlib.Path('input/Documents')
-DEGREE_XLSX = pathlib.Path('input/Data science programs.xlsx')
+PATH_VALIDATED = pathlib.Path('output/validated')
+PATH_XLSX = pathlib.Path('input/Data science programs.xlsx')
+PATTERN = r'(\d{3})-(courses|skills|mission)\.docx'
 
 
 def normalize_filesnames(path):
@@ -22,8 +22,7 @@ def filter_filenames(path):
     """
     Move and log any inconsistent filenames.
     """
-    pattern = r'\d{3}-(courses|skills|mission)\.docx'
-    bad_docs = [f for f in path.iterdir() if not re.match(pattern, f.name)]
+    bad_docs = [f for f in path.iterdir() if not re.match(PATTERN, f.name)]
     pathlib.Path('output/bad_docs').mkdir(exist_ok=True)
     for f in bad_docs:
         f.rename(pathlib.Path('output/bad_docs') / f.name)
@@ -52,27 +51,6 @@ def find_null_docs(path):
             f.write('\n')
 
 
-def load_excel():
-    with pd.ExcelFile(DEGREE_XLSX) as xlsx:
-        degrees_us = pd.read_excel(
-            io=xlsx,
-            sheet_name='US Only',
-            true_values='T',
-            false_values='F'
-        )
-        degrees_non_us = pd.read_excel(
-            io=xlsx,
-            sheet_name='Non-US',
-            true_values='T',
-            false_values='F'
-        )
-        codes = pd.read_excel(
-            io=xlsx,
-            sheet_name='Codes',
-            header=None
-        )
-        return degrees_us, degrees_non_us, codes
-
 
 def find_incomplete_sets(path):
     incomplete_sets_dir = pathlib.Path('output/incomplete_sets')
@@ -82,9 +60,8 @@ def find_incomplete_sets(path):
     )
 
     sets = {}
-    pattern = r'(\d{3})-(courses|skills|mission)\.docx'
     for child in path.iterdir():
-        match = re.match(pattern, child.name)
+        match = re.match(PATTERN, child.name)
         if not match:
             continue
         if not match.group(1) in sets:
@@ -104,7 +81,7 @@ def find_incomplete_sets(path):
                 f.write(f'\n')
 
     for child in path.iterdir():
-        match = re.match(pattern, child.name)
+        match = re.match(PATTERN, child.name)
         if not match:
             continue
         if match.group(1) in incomplete_sets:
@@ -112,10 +89,9 @@ def find_incomplete_sets(path):
 
 
 def name_complete_sets(path):
-    pattern = r'(\d{3})-(courses|skills|mission)\.docx'
     complete_sets = set()
     for child in path.iterdir():
-        match = re.match(pattern, child.name)
+        match = re.match(PATTERN, child.name)
         if match:
             complete_sets.add(match.group(1))
     with open('complete_sets.log', 'w') as f:
@@ -124,10 +100,7 @@ def name_complete_sets(path):
 
 
 def main():
-    filter_filenames(DOCS_DIR)
-    find_null_docs(DOCS_DIR)
-    find_incomplete_sets(DOCS_DIR)
-    name_complete_sets(DOCS_DIR)
+    pass
 
 
 if __name__ == '__main__':
