@@ -109,7 +109,7 @@ def main():
                 row_update['ERROR'] = f'Not found: {degree_id}, {name}'
             else:
                 row_update[name.upper()] = degree_docs[name]
-     
+
         row_update = {k: str(v) for k, v in row_update.items()}
         degree_updates.append(row_update)
 

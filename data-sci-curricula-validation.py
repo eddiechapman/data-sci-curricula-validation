@@ -51,7 +51,6 @@ def find_null_docs(path):
             f.write('\n')
 
 
-
 def find_incomplete_sets(path):
     incomplete_sets_dir = pathlib.Path('output/incomplete_sets')
     incomplete_sets_dir.mkdir(exist_ok=True)
