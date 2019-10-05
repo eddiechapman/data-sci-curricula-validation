@@ -5,6 +5,7 @@
 
 *.xlsx
 *.docx
+*.ods
 
 # VS Code
 .vscode/
